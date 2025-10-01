@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paintingwebsite-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: paintingwebsite
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

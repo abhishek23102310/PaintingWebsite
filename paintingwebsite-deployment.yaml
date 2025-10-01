@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paintingwebsite-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: paintingwebsite
+  template:
+    metadata:
+      labels:
+        app: paintingwebsite
+    spec:
+      containers:
+      - name: paintingwebsite
+        image: abhi2310/paintingwebsite:latest
+        ports:
