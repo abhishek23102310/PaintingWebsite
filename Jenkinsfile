@@ -2,7 +2,7 @@ pipeline {
     agent { label 'abhi-node' }
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dokcer-cred') // DockerHub credentials ID
+        DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
         GITHUB_TOKEN = credentials('github-cred') // GitHub PAT
         DOCKER_IMAGE = "abhi2310/paintingwebsite"
     }
