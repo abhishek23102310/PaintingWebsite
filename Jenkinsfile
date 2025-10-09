@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'Abhi-node' }
+    agent { label 'abhi-node' }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dokcer-cred') // DockerHub credentials ID
