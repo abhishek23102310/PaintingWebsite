@@ -1,35 +1,67 @@
 pipeline {
-    agent { label 'docker-node' }
+    agent { label 'Abhi-node' }
 
-    triggers {
-        pollSCM('* * * * *') // or use GitHub webhook
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // ID you set in Jenkins
+        GITHUB_TOKEN = credentials('github-token') // GitHub PAT
+        DOCKER_IMAGE = "abhi2310/paintingwebsite"
+        JIRA_ISSUE_KEY = "SCRUM-1"
+        JIRA_SITE = "your-jira-site" // Set this in Jenkins Jira plugin
     }
 
     stages {
-        stage('Build') {
+        stage('Checkout Code') {
             steps {
-                echo "Building app from ${env.BRANCH_NAME}"
-                sh 'docker build -t jira-app:v1 .'
+                git branch: 'main', url: 'https://github.com/abhishek23102310/PaintingWebsite.git'
             }
         }
-        stage('Deploy') {
-            when {
-                branch 'feature/AD-5'
-            }
+
+        stage('Build Docker Image') {
             steps {
-                echo "Deploying app from Jira branch"
-                sh 'docker run -d -p 8082:80 jira-app:v1'
+                script {
+                    def tag = "${env.BUILD_NUMBER}"
+                    sh "docker build -t ${DOCKER_IMAGE}:${tag} ."
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    def tag = "${env.BUILD_NUMBER}"
+                    sh """
+                        echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin
+                        docker push ${DOCKER_IMAGE}:${tag}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes with Helm') {
+            steps {
+                script {
+                    def tag = "${env.BUILD_NUMBER}"
+                    sh """
+                        helm upgrade --install paintingwebsite ./helm-chart \
+                        --set image.repository=${DOCKER_IMAGE} \
+                        --set image.tag=${tag}
+                    """
+                }
+            }
+        }
+
+        stage('Update Jira') {
+            steps {
+                jiraIssueSelector idOrKey: "${JIRA_ISSUE_KEY}"
+                jiraAddComment comment: "Build #${env.BUILD_NUMBER} deployed successfully with Docker image tag ${env.BUILD_NUMBER}."
+                jiraTransitionIssue transition: 'Done'
             }
         }
     }
 
     post {
-        success {
-            echo "Build succeeded"
-            // Add Jira integration here
-        }
         failure {
-            echo "Build failed"
+            jiraAddComment comment: "Build #${env.BUILD_NUMBER} failed. Please check Jenkins logs."
         }
     }
 }
