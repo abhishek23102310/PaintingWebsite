@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
-        GITHUB_TOKEN = credentials('github-cred') // GitHub PAT
+        GITHUB_TOKEN = credentials('github') // GitHub PAT
         DOCKER_IMAGE = "abhi2310/paintingwebsite"
     }
 
