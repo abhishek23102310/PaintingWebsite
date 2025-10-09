@@ -2,8 +2,8 @@ pipeline {
     agent { label 'Abhi-node' }
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // ID you set in Jenkins
-        GITHUB_TOKEN = credentials('github-token') // GitHub PAT
+        DOCKERHUB_CREDENTIALS = credentials('dokcer-cred') // ID you set in Jenkins
+        GITHUB_TOKEN = credentials('github-cred') // GitHub PAT
         DOCKER_IMAGE = "abhi2310/paintingwebsite"
         JIRA_ISSUE_KEY = "SCRUM-1"
         JIRA_SITE = "your-jira-site" // Set this in Jenkins Jira plugin
