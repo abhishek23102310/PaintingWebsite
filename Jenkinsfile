@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'abhi-node' }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
@@ -11,6 +11,7 @@ pipeline {
         stage('Start Pipeline') {
             steps {
                 echo "Pipeline started successfully on node: ${env.NODE_NAME}"
+                sh "kubectl get nodes"
             }
         }
 
@@ -50,6 +51,7 @@ pipeline {
         stage('Deploy to Kubernetes with Helm') {
             steps {
                 echo "Starting Deploy to Kubernetes with Helm stage"
+                sh "ls -la ~/.kube/"
                 script {
                     def tag = "${env.BUILD_NUMBER}"
                     sh """
