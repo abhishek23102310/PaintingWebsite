@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'abhi-node' }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Start Pipeline') {
             steps {
-                echo "Pipeline started successfully."
+                echo "Pipeline started successfully on node: ${env.NODE_NAME}"
             }
         }
 
