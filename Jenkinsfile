@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
@@ -9,6 +9,7 @@ pipeline {
 
     stages {
         stage('Checkout Code') {
+            agent { label 'abhi-node' }
             steps {
                 echo "Starting Checkout Code stage"
                 git branch: 'main', url: 'https://github.com/abhishek23102310/PaintingWebsite.git'
@@ -17,6 +18,7 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            agent { label 'abhi-node' }
             steps {
                 echo "Starting Build Docker Image stage"
                 script {
@@ -28,6 +30,7 @@ pipeline {
         }
 
         stage('Push Docker Image') {
+            agent { label 'abhi-node' }
             steps {
                 echo "Starting Push Docker Image stage"
                 script {
@@ -42,6 +45,7 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes with Helm') {
+            agent { label 'abhi-node' }
             steps {
                 echo "Starting Deploy to Kubernetes with Helm stage"
                 script {
