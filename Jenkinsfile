@@ -5,7 +5,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
         GITHUB_TOKEN = credentials('github') // GitHub PAT
         DOCKER_IMAGE = "abhi2310/paintingwebsite"
-
         SONAR_PROJECT_KEY = 'painting-website'
         SONARQUBE_TOKEN = credentials('SonarQube') // SonarQube token credential ID
         SONAR_HOST_URL = 'http://localhost:9001'
@@ -28,18 +27,36 @@ pipeline {
             }
         }
 
+        stage('Install SonarQube Scanner') {
+            steps {
+                sh '''
+                    if ! command -v sonar-scanner &> /dev/null; then
+                        echo "Installing SonarQube Scanner..."
+                        cd /tmp
+                        wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+                        unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
+                        sudo mv sonar-scanner-4.8.0.2856-linux /opt/sonar-scanner
+                        sudo ln -sf /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner
+                        echo "SonarQube Scanner installed successfully"
+                    else
+                        echo "SonarQube Scanner already installed"
+                    fi
+                '''
+            }
+        }
+
         stage('SonarQube Scan') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube') {
-                        sh """
+                        sh '''
                             sonar-scanner \
                                 -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
                                 -Dsonar.sources=. \
                                 -Dsonar.projectVersion=${VERSION} \
                                 -Dsonar.host.url=${SONAR_HOST_URL} \
                                 -Dsonar.login=${SONARQUBE_TOKEN}
-                        """
+                        '''
                     }
                 }
             }
