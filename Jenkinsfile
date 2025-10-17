@@ -5,6 +5,11 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-cred') // DockerHub credentials ID
         GITHUB_TOKEN = credentials('github') // GitHub PAT
         DOCKER_IMAGE = "abhi2310/paintingwebsite"
+
+        SONAR_PROJECT_KEY = 'painting-website'
+        SONARQUBE_TOKEN = credentials('SonarQube') // SonarQube token credential ID
+        SONAR_HOST_URL = 'http://localhost:9001'
+        VERSION = "${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -20,6 +25,23 @@ pipeline {
                 echo "Starting Checkout Code stage"
                 git branch: 'main', url: 'https://github.com/abhishek23102310/PaintingWebsite.git'
                 echo "Checkout Code stage completed"
+            }
+        }
+
+        stage('SonarQube Scan') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                -Dsonar.sources=. \
+                                -Dsonar.projectVersion=${VERSION} \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=${SONARQUBE_TOKEN}
+                        """
+                    }
+                }
             }
         }
 
