@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Install SonarQube Scanner') {
+      /*  stage('Install SonarQube Scanner') {
             steps {
                 sh '''
                     if ! command -v sonar-scanner &> /dev/null; then
@@ -43,7 +43,7 @@ pipeline {
                     fi
                 '''
             }
-        }
+        } */
 
         stage('SonarQube Scan') {
             steps {
