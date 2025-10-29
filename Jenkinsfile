@@ -27,23 +27,7 @@ pipeline {
             }
         }
 
-      /*  stage('Install SonarQube Scanner') {
-            steps {
-                sh '''
-                    if ! command -v sonar-scanner &> /dev/null; then
-                        echo "Installing SonarQube Scanner..."
-                        cd /tmp
-                        wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-                        unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
-                        sudo mv sonar-scanner-4.8.0.2856-linux /opt/sonar-scanner
-                        sudo ln -sf /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner
-                        echo "SonarQube Scanner installed successfully"
-                    else
-                        echo "SonarQube Scanner already installed"
-                    fi
-                '''
-            }
-        } */
+
 
         stage('SonarQube Scan') {
             steps {
